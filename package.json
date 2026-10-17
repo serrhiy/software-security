@@ -1,0 +1,12 @@
+{
+    "devDependencies": {
+        "eslint": "^9.39.4",
+        "eslint-config-metarhia": "^9.1.9",
+        "prettier": "^3.9.9"
+    },
+    "scripts": {
+        "start": "node src/main.js",
+        "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\"",
+        "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\""
+    }
+}
