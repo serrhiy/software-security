@@ -8,6 +8,7 @@
     "scripts": {
         "server": "node src/server.js",
         "client": "node src/client.js",
+        "hypercube": "node src/hypercube.js",
         "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\"",
         "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\""
     }
