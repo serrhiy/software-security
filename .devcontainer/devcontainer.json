@@ -5,5 +5,10 @@
     "context": ".."
   },
   "runArgs": ["--hostname=debian"],
-  "updateRemoteUserUID": true
+  "updateRemoteUserUID": true,
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  }
 }
