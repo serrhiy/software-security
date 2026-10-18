@@ -1,0 +1,9 @@
+{
+  "name": "handshake",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "runArgs": ["--hostname=debian"],
+  "updateRemoteUserUID": true
+}
