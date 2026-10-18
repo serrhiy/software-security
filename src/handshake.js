@@ -10,8 +10,17 @@ const OAEP = {
 
 const short = (buffer) => `${buffer.toString('hex').slice(0, 16)}...`;
 
+const fingerprint = (key) =>
+  crypto.createHash('sha256').update(key).digest('hex').slice(0, 16);
+
 const generateKeys = () =>
   crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
+
+const deriveKey = (premaster, clientRandom, serverRandom) => {
+  const salt = Buffer.concat([clientRandom, serverRandom]);
+  const key = crypto.hkdfSync('sha256', premaster, salt, 'session key', 32);
+  return Buffer.from(key);
+};
 
 const clientHandshake = async (channel, log) => {
   const clientRandom = crypto.randomBytes(32);
@@ -34,6 +43,9 @@ const clientHandshake = async (channel, log) => {
   channel.send({ type: 'premaster', data: encrypted.toString('base64') });
   log(`3. premaster generated: ${short(premaster)}`);
   log(`3. premaster sent, encrypted with public key: ${short(encrypted)}`);
+
+  const key = deriveKey(premaster, clientRandom, serverRandom);
+  log(`4. Session key generated, fingerprint: ${fingerprint(key)}`);
 };
 
 const serverHandshake = async (channel, keys, log) => {
@@ -56,6 +68,9 @@ const serverHandshake = async (channel, keys, log) => {
     Buffer.from(data, 'base64'),
   );
   log(`3. premaster received and decrypted: ${short(premaster)}`);
+
+  const key = deriveKey(premaster, clientRandom, serverRandom);
+  log(`4. Session key generated, fingerprint: ${fingerprint(key)}`);
 };
 
 module.exports = { generateKeys, clientHandshake, serverHandshake };
