@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" font-family="'Segoe UI', Helvetica, Arial, 'DejaVu Sans', sans-serif">
+  <defs>
+    <marker id="open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4b5563"/>
+    </marker>
+    <marker id="rsa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d55e00"/>
+    </marker>
+    <marker id="aes" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0072b2"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="650" fill="#ffffff"/>
+
+  <text x="450" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">Базовий варіант: імітація TLS-рукостискання</text>
+  <text x="450" y="66" text-anchor="middle" font-size="14" fill="#6b7280">Клієнт і сервер узгоджують спільний ключ сесії через відкриту мережу</text>
+
+  <rect x="110" y="92" width="200" height="56" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+  <text x="210" y="116" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Клієнт</text>
+  <text x="210" y="136" text-anchor="middle" font-size="13" font-family="'DejaVu Sans Mono', Consolas, monospace" fill="#6b7280">src/client.js</text>
+
+  <rect x="650" y="92" width="200" height="56" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+  <text x="750" y="116" text-anchor="middle" font-size="17" font-weight="700" fill="#111827">Сервер</text>
+  <text x="750" y="136" text-anchor="middle" font-size="13" fill="#6b7280">має пару ключів RSA-2048</text>
+
+  <line x1="210" y1="148" x2="210" y2="556" stroke="#d1d5db" stroke-width="2" stroke-dasharray="6 5"/>
+  <line x1="750" y1="148" x2="750" y2="556" stroke="#d1d5db" stroke-width="2" stroke-dasharray="6 5"/>
+
+  <g font-size="14" fill="#ffffff" font-weight="700" text-anchor="middle">
+    <circle cx="50" cy="197" r="14" fill="#111827"/><text x="50" y="202">1</text>
+    <circle cx="50" cy="252" r="14" fill="#111827"/><text x="50" y="257">2</text>
+    <circle cx="50" cy="307" r="14" fill="#111827"/><text x="50" y="312">3</text>
+    <circle cx="50" cy="381" r="14" fill="#111827"/><text x="50" y="386">4</text>
+    <circle cx="50" cy="467" r="14" fill="#111827"/><text x="50" y="472">5</text>
+    <circle cx="50" cy="534" r="14" fill="#111827"/><text x="50" y="539">6</text>
+  </g>
+
+  <g font-size="15" fill="#111827" text-anchor="middle">
+    <text x="480" y="187"><tspan font-family="'DejaVu Sans Mono', Consolas, monospace" font-weight="700">client_hello</tspan>: clientRandom (32 байти)</text>
+    <line x1="212" y1="197" x2="746" y2="197" stroke="#4b5563" stroke-width="2" marker-end="url(#open)"/>
+
+    <text x="480" y="242"><tspan font-family="'DejaVu Sans Mono', Consolas, monospace" font-weight="700">server_hello</tspan>: serverRandom + publicKey</text>
+    <line x1="748" y1="252" x2="214" y2="252" stroke="#4b5563" stroke-width="2" marker-end="url(#open)"/>
+
+    <text x="480" y="297"><tspan font-family="'DejaVu Sans Mono', Consolas, monospace" font-weight="700">premaster</tspan>, зашифрований publicKey (RSA-OAEP)</text>
+    <line x1="212" y1="307" x2="746" y2="307" stroke="#d55e00" stroke-width="2.5" marker-end="url(#rsa)"/>
+  </g>
+  <text x="220" y="329" font-size="13" fill="#6b7280">premaster = 48 випадкових байт</text>
+  <text x="740" y="329" text-anchor="end" font-size="13" fill="#6b7280">privateKey розшифровує premaster</text>
+
+  <rect x="150" y="352" width="660" height="58" rx="8" fill="#f9fafb" stroke="#9ca3af" stroke-dasharray="5 4"/>
+  <text x="480" y="377" text-anchor="middle" font-size="14" font-family="'DejaVu Sans Mono', Consolas, monospace" fill="#111827">sessionKey = HKDF(premaster, clientRandom + serverRandom)</text>
+  <text x="480" y="399" text-anchor="middle" font-size="13" fill="#6b7280">кожна сторона обчислює ключ сама, мережею він не передається</text>
+
+  <g font-size="15" fill="#111827" text-anchor="middle">
+    <text x="480" y="445"><tspan font-family="'DejaVu Sans Mono', Consolas, monospace" font-weight="700">ready</tspan>, зашифроване sessionKey</text>
+    <line x1="212" y1="457" x2="746" y2="457" stroke="#0072b2" stroke-width="2.5" marker-end="url(#aes)"/>
+    <line x1="748" y1="477" x2="214" y2="477" stroke="#0072b2" stroke-width="2.5" marker-end="url(#aes)"/>
+
+    <text x="480" y="522">чат: <tspan font-family="'DejaVu Sans Mono', Consolas, monospace" font-weight="700">{ iv, tag, data }</tspan>, AES-256-GCM з sessionKey</text>
+    <line x1="214" y1="534" x2="746" y2="534" stroke="#0072b2" stroke-width="2.5" marker-start="url(#aes)" marker-end="url(#aes)"/>
+  </g>
+
+  <g font-size="13" fill="#374151">
+    <line x1="150" y1="590" x2="190" y2="590" stroke="#4b5563" stroke-width="2"/>
+    <text x="198" y="595">відкрито</text>
+    <line x1="300" y1="590" x2="340" y2="590" stroke="#d55e00" stroke-width="2.5"/>
+    <text x="348" y="595">RSA (асиметричне)</text>
+    <line x1="510" y1="590" x2="550" y2="590" stroke="#0072b2" stroke-width="2.5"/>
+    <text x="558" y="595">AES-256-GCM (симетричне)</text>
+  </g>
+  <text x="450" y="626" text-anchor="middle" font-size="13" fill="#6b7280">Сторонній у мережі бачить випадкові числа, publicKey і шифротекст, але не premaster і не sessionKey</text>
+</svg>
