@@ -7,6 +7,7 @@
     },
     "scripts": {
         "server": "node src/server.js",
+        "client": "node src/client.js",
         "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\"",
         "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\""
     }
