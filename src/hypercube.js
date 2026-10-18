@@ -3,9 +3,15 @@
 const net = require('node:net');
 const { once } = require('node:events');
 const { createChannel, expect } = require('./channel.js');
+const {
+  generateKeys,
+  clientHandshake,
+  serverHandshake,
+} = require('./handshake.js');
 
 const DIMENSION = 3;
 const SIZE = 2 ** DIMENSION;
+const ROOT = 0;
 
 const nodeOptions = { host: '127.0.0.1', basePort: 4000 };
 
@@ -138,6 +144,20 @@ const main = async () => {
   const nodes = Array.from({ length: SIZE }, (_, id) => createNode(id));
   await Promise.all(nodes.map((node) => node.start()));
   await Promise.all(nodes.map((node) => node.link()));
+
+  const root = nodes[ROOT];
+  const others = nodes.filter((node) => node !== root);
+  const keys = generateKeys();
+  const silent = () => {};
+
+  console.log(`\nHandshakes with root ${root.name}`);
+  const accept = (node) =>
+    serverHandshake(root.channelTo(node.id), keys, silent);
+  const join = async (node) => {
+    await clientHandshake(node.channelTo(ROOT), silent);
+    node.log(`Secure session with ${root.name} established`);
+  };
+  await Promise.all([...others.map(accept), ...others.map(join)]);
 
   for (const node of nodes) node.close();
 };
