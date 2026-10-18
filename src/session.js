@@ -24,4 +24,24 @@ const decrypt = (key, message) => {
   return text.toString('utf8');
 };
 
-module.exports = { encrypt, decrypt };
+const createSession = (channel, key, log) => ({
+  send: (text) => {
+    const message = encrypt(key, text);
+    channel.send({ type: 'message', ...message });
+    log(`Sent encrypted: ${message.data}`);
+  },
+
+  async *[Symbol.asyncIterator]() {
+    while (true) {
+      const message = await channel.receive();
+      if (!message) return;
+      if (message.type !== 'message') {
+        throw new Error(`Unexpected ${message.type}`);
+      }
+      log(`Received encrypted: ${message.data}`);
+      yield decrypt(key, message);
+    }
+  },
+});
+
+module.exports = { encrypt, decrypt, createSession };

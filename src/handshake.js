@@ -2,7 +2,7 @@
 
 const crypto = require('node:crypto');
 const { expect } = require('./channel.js');
-const { encrypt, decrypt } = require('./session.js');
+const { encrypt, decrypt, createSession } = require('./session.js');
 
 const OAEP = {
   padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
@@ -34,6 +34,7 @@ const finish = async (channel, key, log) => {
   log('5. ready received and decrypted');
 
   log('6. Handshake complete, secure channel established');
+  return createSession(channel, key, log);
 };
 
 const clientHandshake = async (channel, log) => {
