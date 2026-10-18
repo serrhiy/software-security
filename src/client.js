@@ -1,6 +1,7 @@
 'use strict';
 
 const net = require('node:net');
+const readline = require('node:readline');
 const { once } = require('node:events');
 const { createChannel } = require('./channel.js');
 const { clientHandshake } = require('./handshake.js');
@@ -20,11 +21,17 @@ const main = async () => {
   socket.on('error', (error) => log(`Socket error: ${error.message}`));
 
   const channel = createChannel(socket);
-  await clientHandshake(channel, log);
+  const session = await clientHandshake(channel, log);
 
-  socket.end();
-  await once(socket, 'close');
+  log('Type a message and press Enter');
+  const input = readline.createInterface({ input: process.stdin });
+  input.on('line', (text) => session.send(text));
+  input.on('close', () => socket.end());
+
+  for await (const text of session) log(`Decrypted: ${text}`);
+
   log('Connection closed');
+  input.close();
 };
 
 main().catch((error) => {
