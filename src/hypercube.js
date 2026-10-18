@@ -14,16 +14,69 @@ const label = (id) => id.toString(2).padStart(DIMENSION, '0');
 const neighborsOf = (id) =>
   Array.from({ length: DIMENSION }, (_, bit) => id ^ (1 << bit));
 
+const nextHop = (from, to) => {
+  const diff = from ^ to;
+  return from ^ (diff & -diff);
+};
+
+const createQueue = () => {
+  const items = [];
+  const waiting = [];
+
+  const push = (item) => {
+    const next = waiting.shift();
+    if (next) next.resolve(item);
+    else items.push(item);
+  };
+
+  const shift = () => {
+    if (items.length > 0) return Promise.resolve(items.shift());
+    const next = Promise.withResolvers();
+    waiting.push(next);
+    return next.promise;
+  };
+
+  return { push, shift };
+};
+
 const createNode = (id) => {
   const name = label(id);
   const port = nodeOptions.basePort + id;
   const neighbors = neighborsOf(id);
   const links = new Map();
+  const inboxes = new Map();
   const sockets = new Set();
   const linked = Promise.withResolvers();
   const server = new net.Server();
 
   const log = (text) => console.log(`[node ${name}] ${text}`);
+
+  const inbox = (peer) => {
+    if (!inboxes.has(peer)) inboxes.set(peer, createQueue());
+    return inboxes.get(peer);
+  };
+
+  const route = (packet) => {
+    const { from, to, message } = packet;
+    if (to === id) {
+      inbox(from).push(message);
+      return;
+    }
+    const hop = nextHop(id, to);
+    if (from !== id) {
+      const path = `${label(from)} → ${label(to)}`;
+      log(`Forward ${message.type} ${path} via ${label(hop)}`);
+    }
+    links.get(hop).send(packet);
+  };
+
+  const read = async (channel) => {
+    while (true) {
+      const packet = await channel.receive();
+      if (!packet) return;
+      route(packet);
+    }
+  };
 
   const open = (socket) => {
     sockets.add(socket);
@@ -34,6 +87,7 @@ const createNode = (id) => {
   const addLink = (neighbor, channel) => {
     links.set(neighbor, channel);
     if (links.size === neighbors.length) linked.resolve();
+    read(channel).catch((error) => log(`Link error: ${error.message}`));
   };
 
   const accept = async (socket) => {
@@ -66,12 +120,17 @@ const createNode = (id) => {
     log(`Port ${port}, linked with ${neighbors.map(label).join(', ')}`);
   };
 
+  const channelTo = (peer) => ({
+    send: (message) => route({ from: id, to: peer, message }),
+    receive: () => inbox(peer).shift(),
+  });
+
   const close = () => {
     for (const socket of sockets) socket.end();
     server.close();
   };
 
-  return { id, name, log, start, link, close };
+  return { id, name, log, start, link, channelTo, close };
 };
 
 const main = async () => {
