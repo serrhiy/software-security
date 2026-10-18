@@ -139,6 +139,30 @@ const createNode = (id) => {
   return { id, name, log, start, link, channelTo, close };
 };
 
+const allToOne = async (node, messages) => {
+  let collected = messages;
+
+  for (let bit = 0; bit < DIMENSION; bit++) {
+    const partner = label(node.id ^ (1 << bit));
+    const channel = node.channelTo(node.id ^ (1 << bit));
+    const round = `Round ${bit + 1}`;
+
+    if (node.id & (1 << bit)) {
+      channel.send({ type: 'bundle', messages: collected });
+      const count = collected.length;
+      node.log(`${round}: sent ${count} encrypted message(s) to ${partner}`);
+      return null;
+    }
+
+    const bundle = await expect(channel, 'bundle');
+    collected = [...collected, ...bundle.messages];
+    const count = bundle.messages.length;
+    node.log(`${round}: received ${count} from ${partner}`);
+  }
+
+  return collected;
+};
+
 const main = async () => {
   console.log(`Hypercube: dimension ${DIMENSION}, ${SIZE} nodes`);
   const nodes = Array.from({ length: SIZE }, (_, id) => createNode(id));
@@ -151,13 +175,38 @@ const main = async () => {
   const silent = () => {};
 
   console.log(`\nHandshakes with root ${root.name}`);
-  const accept = (node) =>
-    serverHandshake(root.channelTo(node.id), keys, silent);
-  const join = async (node) => {
-    await clientHandshake(node.channelTo(ROOT), silent);
-    node.log(`Secure session with ${root.name} established`);
+  const accept = async (node) => {
+    const channel = root.channelTo(node.id);
+    const session = await serverHandshake(channel, keys, silent);
+    return [node.id, session];
   };
-  await Promise.all([...others.map(accept), ...others.map(join)]);
+  const join = async (node) => {
+    const session = await clientHandshake(node.channelTo(ROOT), silent);
+    node.log(`Secure session with ${root.name} established`);
+    return session;
+  };
+  const [accepted, joined] = await Promise.all([
+    Promise.all(others.map(accept)),
+    Promise.all(others.map(join)),
+  ]);
+  const sessions = new Map(accepted);
+
+  console.log(`\nAll-to-one to root ${root.name}`);
+  const bundles = others.map((node, index) => {
+    const text = `Hello from node ${node.name}`;
+    return [{ from: node.id, ...joined[index].encrypt(text) }];
+  });
+  const [collected] = await Promise.all([
+    allToOne(root, []),
+    ...others.map((node, index) => allToOne(node, bundles[index])),
+  ]);
+
+  console.log(`\nMessages collected at root ${root.name}`);
+  for (const message of collected) {
+    const text = sessions.get(message.from).decrypt(message);
+    root.log(`${label(message.from)}: ${message.data} → ${text}`);
+  }
+  root.log(`Received ${collected.length}/${others.length} messages`);
 
   for (const node of nodes) node.close();
 };
