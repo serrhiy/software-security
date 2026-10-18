@@ -2,11 +2,14 @@
 
 const crypto = require('node:crypto');
 const { expect } = require('./channel.js');
+const { encrypt, decrypt } = require('./session.js');
 
 const OAEP = {
   padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
   oaepHash: 'sha256',
 };
+
+const READY = 'ready';
 
 const short = (buffer) => `${buffer.toString('hex').slice(0, 16)}...`;
 
@@ -20,6 +23,17 @@ const deriveKey = (premaster, clientRandom, serverRandom) => {
   const salt = Buffer.concat([clientRandom, serverRandom]);
   const key = crypto.hkdfSync('sha256', premaster, salt, 'session key', 32);
   return Buffer.from(key);
+};
+
+const finish = async (channel, key, log) => {
+  channel.send({ type: 'ready', ...encrypt(key, READY) });
+  log('5. ready sent, encrypted with session key');
+
+  const message = await expect(channel, 'ready');
+  if (decrypt(key, message) !== READY) throw new Error('Invalid ready');
+  log('5. ready received and decrypted');
+
+  log('6. Handshake complete, secure channel established');
 };
 
 const clientHandshake = async (channel, log) => {
@@ -46,6 +60,8 @@ const clientHandshake = async (channel, log) => {
 
   const key = deriveKey(premaster, clientRandom, serverRandom);
   log(`4. Session key generated, fingerprint: ${fingerprint(key)}`);
+
+  return finish(channel, key, log);
 };
 
 const serverHandshake = async (channel, keys, log) => {
@@ -71,6 +87,8 @@ const serverHandshake = async (channel, keys, log) => {
 
   const key = deriveKey(premaster, clientRandom, serverRandom);
   log(`4. Session key generated, fingerprint: ${fingerprint(key)}`);
+
+  return finish(channel, key, log);
 };
 
 module.exports = { generateKeys, clientHandshake, serverHandshake };
