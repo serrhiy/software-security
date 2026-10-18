@@ -2,6 +2,8 @@
 
 const net = require('node:net');
 const { once } = require('node:events');
+const { createChannel } = require('./channel.js');
+const { clientHandshake } = require('./handshake.js');
 
 const clientOptions = {
   socket: { keepAlive: true },
@@ -16,6 +18,9 @@ const main = async () => {
   await once(socket, 'connect');
   log(`Connected to ${socket.remoteAddress}:${socket.remotePort}`);
   socket.on('error', (error) => log(`Socket error: ${error.message}`));
+
+  const channel = createChannel(socket);
+  await clientHandshake(channel, log);
 
   socket.end();
   await once(socket, 'close');
