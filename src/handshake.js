@@ -3,6 +3,11 @@
 const crypto = require('node:crypto');
 const { expect } = require('./channel.js');
 
+const OAEP = {
+  padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+  oaepHash: 'sha256',
+};
+
 const short = (buffer) => `${buffer.toString('hex').slice(0, 16)}...`;
 
 const generateKeys = () =>
@@ -20,6 +25,15 @@ const clientHandshake = async (channel, log) => {
   const serverRandom = Buffer.from(serverHello.random, 'base64');
   log(`2. server_hello received, random: ${short(serverRandom)}`);
   log('2. Server public key received');
+
+  const premaster = crypto.randomBytes(48);
+  const encrypted = crypto.publicEncrypt(
+    { key: serverHello.publicKey, ...OAEP },
+    premaster,
+  );
+  channel.send({ type: 'premaster', data: encrypted.toString('base64') });
+  log(`3. premaster generated: ${short(premaster)}`);
+  log(`3. premaster sent, encrypted with public key: ${short(encrypted)}`);
 };
 
 const serverHandshake = async (channel, keys, log) => {
@@ -35,6 +49,13 @@ const serverHandshake = async (channel, keys, log) => {
   });
   log(`2. server_hello sent, random: ${short(serverRandom)}`);
   log('2. Server public key sent');
+
+  const { data } = await expect(channel, 'premaster');
+  const premaster = crypto.privateDecrypt(
+    { key: keys.privateKey, ...OAEP },
+    Buffer.from(data, 'base64'),
+  );
+  log(`3. premaster received and decrypted: ${short(premaster)}`);
 };
 
 module.exports = { generateKeys, clientHandshake, serverHandshake };
