@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="530" viewBox="0 0 920 530" font-family="'Segoe UI', Helvetica, Arial, 'DejaVu Sans', sans-serif">
+  <defs>
+    <marker id="r1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0072b2"/>
+    </marker>
+    <marker id="r2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d55e00"/>
+    </marker>
+    <marker id="r3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#009e73"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="530" fill="#ffffff"/>
+
+  <text x="460" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">Розширений варіант: all-to-one у гіперкубі (d = 3, 8 вузлів)</text>
+  <text x="460" y="66" text-anchor="middle" font-size="14" fill="#6b7280">Сусіди відрізняються одним бітом номера, кожен вузол з'єднаний лише з 3 сусідами (12 ребер)</text>
+
+  <g stroke="#d1d5db" stroke-width="2">
+    <line x1="110" y1="450" x2="330" y2="450"/>
+    <line x1="110" y1="230" x2="330" y2="230"/>
+    <line x1="240" y1="350" x2="460" y2="350"/>
+    <line x1="240" y1="130" x2="460" y2="130"/>
+    <line x1="110" y1="450" x2="110" y2="230"/>
+    <line x1="330" y1="450" x2="330" y2="230"/>
+    <line x1="240" y1="350" x2="240" y2="130"/>
+    <line x1="460" y1="350" x2="460" y2="130"/>
+    <line x1="110" y1="450" x2="240" y2="350"/>
+    <line x1="330" y1="450" x2="460" y2="350"/>
+    <line x1="110" y1="230" x2="240" y2="130"/>
+    <line x1="330" y1="230" x2="460" y2="130"/>
+  </g>
+
+  <g stroke-width="5" stroke-linecap="round">
+    <line x1="302" y1="450" x2="140" y2="450" stroke="#0072b2" marker-end="url(#r1)"/>
+    <line x1="302" y1="230" x2="140" y2="230" stroke="#0072b2" marker-end="url(#r1)"/>
+    <line x1="432" y1="350" x2="270" y2="350" stroke="#0072b2" marker-end="url(#r1)"/>
+    <line x1="432" y1="130" x2="270" y2="130" stroke="#0072b2" marker-end="url(#r1)"/>
+    <line x1="110" y1="258" x2="110" y2="420" stroke="#d55e00" marker-end="url(#r2)"/>
+    <line x1="240" y1="158" x2="240" y2="320" stroke="#d55e00" marker-end="url(#r2)"/>
+    <line x1="218" y1="367" x2="134" y2="432" stroke="#009e73" marker-end="url(#r3)"/>
+  </g>
+
+  <g font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">
+    <circle cx="220" cy="436" r="10" fill="#0072b2"/><text x="220" y="440">1</text>
+    <circle cx="176" cy="216" r="10" fill="#0072b2"/><text x="176" y="220">1</text>
+    <circle cx="350" cy="336" r="10" fill="#0072b2"/><text x="350" y="340">1</text>
+    <circle cx="350" cy="116" r="10" fill="#0072b2"/><text x="350" y="120">1</text>
+    <circle cx="92" cy="340" r="10" fill="#d55e00"/><text x="92" y="344">2</text>
+    <circle cx="222" cy="285" r="10" fill="#d55e00"/><text x="222" y="289">2</text>
+    <circle cx="186" cy="412" r="10" fill="#009e73"/><text x="186" y="416">3</text>
+  </g>
+
+  <g font-size="15" font-weight="700" text-anchor="middle" font-family="'DejaVu Sans Mono', Consolas, monospace">
+    <circle cx="110" cy="450" r="24" fill="#111827"/><text x="110" y="455" fill="#ffffff">000</text>
+    <circle cx="330" cy="450" r="24" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="330" y="455" fill="#111827">001</text>
+    <circle cx="110" cy="230" r="24" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="110" y="235" fill="#111827">010</text>
+    <circle cx="330" cy="230" r="24" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="330" y="235" fill="#111827">011</text>
+    <circle cx="240" cy="350" r="24" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="240" y="355" fill="#111827">100</text>
+    <circle cx="460" cy="350" r="24" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="460" y="355" fill="#111827">101</text>
+    <circle cx="240" cy="130" r="24" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="240" y="135" fill="#111827">110</text>
+    <circle cx="460" cy="130" r="24" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="460" y="135" fill="#111827">111</text>
+  </g>
+  <text x="110" y="498" text-anchor="middle" font-size="13" fill="#374151">корінь, збирає все</text>
+
+  <g font-size="14" fill="#111827">
+    <rect x="540" y="105" width="16" height="16" rx="3" fill="#0072b2"/>
+    <text x="566" y="119" font-size="16" font-weight="700">Раунд 1 · біт 001</text>
+    <text x="566" y="143" font-family="'DejaVu Sans Mono', Consolas, monospace" font-size="13">001→000, 011→010, 101→100, 111→110</text>
+    <text x="566" y="163" fill="#6b7280" font-size="13">по 1 повідомленню в пакеті</text>
+
+    <rect x="540" y="190" width="16" height="16" rx="3" fill="#d55e00"/>
+    <text x="566" y="204" font-size="16" font-weight="700">Раунд 2 · біт 010</text>
+    <text x="566" y="228" font-family="'DejaVu Sans Mono', Consolas, monospace" font-size="13">010→000, 110→100</text>
+    <text x="566" y="248" fill="#6b7280" font-size="13">по 2 повідомлення в пакеті</text>
+
+    <rect x="540" y="275" width="16" height="16" rx="3" fill="#009e73"/>
+    <text x="566" y="289" font-size="16" font-weight="700">Раунд 3 · біт 100</text>
+    <text x="566" y="313" font-family="'DejaVu Sans Mono', Consolas, monospace" font-size="13">100→000</text>
+    <text x="566" y="333" fill="#6b7280" font-size="13">4 повідомлення в пакеті</text>
+
+    <text x="540" y="380" font-weight="700">Правило раунду i:</text>
+    <text x="540" y="402">вузол, у якого біт i = 1, надсилає все зібране</text>
+    <text x="540" y="422">сусідові з номером id XOR 2^i і виходить;</text>
+    <text x="540" y="442">вузол з бітом i = 0 приймає і додає до свого.</text>
+
+    <text x="540" y="482" font-weight="700">Результат: 000 отримує 7 повідомлень</text>
+    <text x="540" y="504">за 3 раунди (log₂8) замість 7 окремих передач.</text>
+  </g>
+</svg>
