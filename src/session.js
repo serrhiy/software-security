@@ -25,6 +25,10 @@ const decrypt = (key, message) => {
 };
 
 const createSession = (channel, key, log) => ({
+  encrypt: (text) => encrypt(key, text),
+
+  decrypt: (message) => decrypt(key, message),
+
   send: (text) => {
     const message = encrypt(key, text);
     channel.send({ type: 'message', ...message });
