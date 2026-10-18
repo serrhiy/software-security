@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="440" viewBox="0 0 900 440" font-family="'Segoe UI', Helvetica, Arial, 'DejaVu Sans', sans-serif">
+  <defs>
+    <marker id="hs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+    </marker>
+    <marker id="r1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0072b2"/>
+    </marker>
+    <marker id="r2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d55e00"/>
+    </marker>
+    <marker id="r3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#009e73"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="440" fill="#ffffff"/>
+
+  <text x="450" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">Наскрізне шифрування: посередники бачать лише шифротекст</text>
+  <text x="450" y="66" text-anchor="middle" font-size="14" fill="#6b7280">Гілка 111 → 110 → 100 → 000 (маршрут: щоразу змінюється молодший біт, що відрізняється)</text>
+
+  <text x="450" y="104" text-anchor="middle" font-size="14" fill="#374151">рукостискання 111 ↔ 000 теж іде через посередників: 111→000 через 110 і 100, 000→111 через 001 і 011</text>
+  <path d="M120,138 Q120,116 150,116 L750,116 Q780,116 780,138" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 5" marker-start="url(#hs)" marker-end="url(#hs)"/>
+
+  <g stroke-width="5" stroke-linecap="round">
+    <line x1="152" y1="170" x2="300" y2="170" stroke="#0072b2" marker-end="url(#r1)"/>
+    <line x1="372" y1="170" x2="520" y2="170" stroke="#d55e00" marker-end="url(#r2)"/>
+    <line x1="592" y1="170" x2="740" y2="170" stroke="#009e73" marker-end="url(#r3)"/>
+  </g>
+  <g font-size="13" text-anchor="middle" font-weight="700">
+    <text x="230" y="158" fill="#0072b2">раунд 1</text>
+    <text x="450" y="158" fill="#d55e00">раунд 2</text>
+    <text x="670" y="158" fill="#009e73">раунд 3</text>
+  </g>
+
+  <g font-size="16" font-weight="700" text-anchor="middle" font-family="'DejaVu Sans Mono', Consolas, monospace">
+    <circle cx="120" cy="170" r="28" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="120" y="176" fill="#111827">111</text>
+    <circle cx="340" cy="170" r="28" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="340" y="176" fill="#111827">110</text>
+    <circle cx="560" cy="170" r="28" fill="#ffffff" stroke="#374151" stroke-width="2"/><text x="560" y="176" fill="#111827">100</text>
+    <circle cx="780" cy="170" r="28" fill="#111827"/><text x="780" y="176" fill="#ffffff">000</text>
+  </g>
+
+  <g font-size="12" fill="#6b7280" text-anchor="middle">
+    <text x="230" y="228">пакет: 1 повідомлення</text>
+    <text x="450" y="228">пакет: 2 повідомлення</text>
+    <text x="670" y="228">пакет: 4 повідомлення</text>
+  </g>
+  <g font-size="12" font-weight="700" text-anchor="middle" font-family="'DejaVu Sans Mono', Consolas, monospace" fill="#ffffff">
+    <rect x="200" y="240" width="60" height="28" rx="6" fill="#374151"/><text x="230" y="258">E(111)</text>
+
+    <rect x="386" y="240" width="60" height="28" rx="6" fill="#374151"/><text x="416" y="258">E(110)</text>
+    <rect x="454" y="240" width="60" height="28" rx="6" fill="#374151"/><text x="484" y="258">E(111)</text>
+
+    <rect x="538" y="240" width="60" height="28" rx="6" fill="#374151"/><text x="568" y="258">E(100)</text>
+    <rect x="604" y="240" width="60" height="28" rx="6" fill="#374151"/><text x="634" y="258">E(101)</text>
+    <rect x="670" y="240" width="60" height="28" rx="6" fill="#374151"/><text x="700" y="258">E(110)</text>
+    <rect x="736" y="240" width="60" height="28" rx="6" fill="#374151"/><text x="766" y="258">E(111)</text>
+  </g>
+
+  <rect x="60" y="300" width="780" height="120" rx="10" fill="#f9fafb" stroke="#d1d5db"/>
+  <g font-size="14" fill="#111827">
+    <text x="80" y="328"><tspan font-family="'DejaVu Sans Mono', Consolas, monospace" font-weight="700">E(x)</tspan> — повідомлення вузла x, зашифроване AES-256-GCM ключем, який знають лише x і 000.</text>
+    <text x="80" y="352">110 і 100 лише додають свої E(...) до пакета й пересилають далі, прочитати чужі не можуть.</text>
+    <text x="80" y="376">E(101) вузол 100 отримав від 101 у раунді 1; 001, 010 і 011 приходять до 000 іншими гілками.</text>
+    <text x="80" y="400">000 розшифровує кожне повідомлення ключем його відправника.</text>
+  </g>
+</svg>
