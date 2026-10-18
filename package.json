@@ -6,7 +6,7 @@
         "prettier": "^3.9.9"
     },
     "scripts": {
-        "start": "node src/main.js",
+        "server": "node src/server.js",
         "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\"",
         "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\""
     }
